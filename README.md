@@ -1,17 +1,27 @@
-# lab8
+# Lab 8B - Weather Companion
 
-A new Flutter project.
+Weather Companion helps users plan their day. Search for a city to see current
+temperature, apparent temperature, humidity, wind, weather condition, a
+five-day forecast, and practical advice such as whether to bring an umbrella or
+avoid intense outdoor exercise.
 
-## Getting Started
+## Requirements covered
 
-This project is a starting point for a Flutter application.
+- Real REST calls to Open-Meteo Geocoding and Forecast APIs
+- `http`, `Future`, `async`/`await`, and `FutureBuilder`
+- Dedicated model classes and a service layer
+- Loading, error, retry, empty, and success states
+- City search, forecast cards, and purpose-driven recommendations
+- Widget tests for successful display and city search
 
-A few resources to get you started if this is your first Flutter project:
+Open-Meteo requires no API key for this educational project.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Run
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```sh
+flutter pub get
+flutter run
+```
+
+For submission screenshots, capture the loading indicator, the error/retry
+screen with the network disabled, and a successful city result.
