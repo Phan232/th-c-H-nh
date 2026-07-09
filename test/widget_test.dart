@@ -7,24 +7,76 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:hello/lab3/ex2.dart';
+import 'package:lab8b/main.dart';
+import 'package:lab8b/models/weather_location.dart';
+import 'package:lab8b/models/weather_report.dart';
+import 'package:lab8b/services/weather_service.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('displays weather returned by the repository', (tester) async {
+    await tester.pumpWidget(const MyApp(weatherRepository: _FakeRepository()));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Weather Companion'), findsOneWidget);
+    expect(find.text('Ho Chi Minh City, Vietnam'), findsOneWidget);
+    expect(find.text('32°'), findsOneWidget);
+    expect(find.text('5-day outlook'), findsOneWidget);
+    expect(find.text('Your day, decoded'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('search passes the city to the repository', (tester) async {
+    final repository = _RecordingRepository();
+    await tester.pumpWidget(MyApp(weatherRepository: repository));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Da Nang');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await tester.pumpAndSettle();
+
+    expect(repository.queries, ['Ho Chi Minh City', 'Da Nang']);
   });
 }
+
+class _FakeRepository implements WeatherRepository {
+  const _FakeRepository();
+
+  @override
+  Future<WeatherReport> fetchWeatherForCity(String city) async => _report;
+}
+
+class _RecordingRepository implements WeatherRepository {
+  final queries = <String>[];
+
+  @override
+  Future<WeatherReport> fetchWeatherForCity(String city) async {
+    queries.add(city);
+    return _report;
+  }
+}
+
+final _report = WeatherReport(
+  location: const WeatherLocation(
+    name: 'Ho Chi Minh City',
+    country: 'Vietnam',
+    latitude: 10.82,
+    longitude: 106.63,
+  ),
+  current: const CurrentWeather(
+    temperature: 32,
+    feelsLike: 36,
+    humidity: 72,
+    windSpeed: 12,
+    precipitation: 0,
+    weatherCode: 1,
+    isDay: true,
+  ),
+  forecast: [
+    DailyForecast(
+      date: DateTime.now(),
+      maxTemperature: 34,
+      minTemperature: 27,
+      precipitationChance: 30,
+      weatherCode: 2,
+    ),
+  ],
+);
